@@ -146,7 +146,7 @@ jobs:
             export KSU_EXPECTED_HASH=${{ vars.EXPECTED_HASH }}
           fi
           if [ -e build/build.sh ]; then
-            BUILD_CONFIG=build.kernel build/build.sh
+            BUILD_CONFIG=common/build.kernel build/build.sh
           else
             tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
           fi
