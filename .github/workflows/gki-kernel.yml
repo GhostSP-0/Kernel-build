@@ -94,14 +94,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           sudo apt-get install repo -y
           mkdir android-kernel && cd android-kernel
-          repo init -u https://github.com/Dahlabanteng/kernel-manifest -b udc
-          DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
-          if grep -q deprecated <<< $REMOTE_BRANCH; then
-            echo "Found deprecated branch: ${{ inputs.tag }}"
-            sed -i 's/"${{ inputs.tag }}"/"deprecated\/${{ inputs.tag }}"/g' $DEFAULT_MANIFEST_PATH
-            cat $DEFAULT_MANIFEST_PATH
-          fi
-          repo --version
+          repo init -u https://github.com/Dahlabanteng/kernel-manifest -b udc    
           repo sync -j$(nproc --all) --no-tags
           df -h
           ls
