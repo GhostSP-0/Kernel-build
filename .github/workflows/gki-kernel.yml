@@ -87,6 +87,10 @@ jobs:
             echo "UPLOAD=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: swapon
+        run: | 
+          sudo fallocate -l 32G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+          
       - name: Setup kernel source
         run: |
           echo "Free space:"
@@ -104,14 +108,20 @@ jobs:
           repo --version
           repo --trace sync -c -j$(nproc --all) --no-tags
           df -h
+          ls
 
       - name: install clang 18
         run: | 
-          mkdir $GITHUB_WORKSPACE/android-kernel/prebuilts-master/clang/host/linux-x86/clang-r510928
-          cd $GITHUB_WORKSPACE/android-kernel/prebuilts-master/clang/host/linux-x86/clang-r510928
-          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r510928.tar.gz
+          mkdir $GITHUB_WORKSPACE/android-kernel/clang-19.0.0
+          cd $GITHUB_WORKSPACE/android-kernel/clang-19.0.0
+          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r522817.tar.gz
           tar xvf *
           cd $GITHUB_WORKSPACE/android-kernel
+
+      - name: Download source kernel
+        run: | 
+          cd $GITHUB_WORKSPACE/android-kernel
+          git clone https://github.com/GhostSP-0/projeck-kernel.git -b lts common
 
       - name: Setup KernelSU
         env:
@@ -126,7 +136,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: gki-kernel-aarch64-${{ inputs.version_name }}
-          max-size: 2G
+          max-size: 32G
           save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Make working directory clean to avoid dirty
@@ -146,7 +156,7 @@ jobs:
             export KSU_EXPECTED_HASH=${{ vars.EXPECTED_HASH }}
           fi
           if [ -e build/build.sh ]; then
-            LTO=thin BUILD_CONFIG=build.config build/build.sh CC="/usr/bin/ccache clang"
+            BUILD_CONFIG=build.config build/build.sh CC="/usr/bin/ccache clang"
           else
             tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
           fi
