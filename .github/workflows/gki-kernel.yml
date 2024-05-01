@@ -146,7 +146,7 @@ jobs:
             export KSU_EXPECTED_HASH=${{ vars.EXPECTED_HASH }}
           fi
           if [ -e build/build.sh ]; then
-            BUILD_CONFIG=build.config build/build.sh CC="/usr/bin/ccache clang"
+            BUILD_CONFIG=build.kernel build/build.sh
           else
             tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
           fi
@@ -159,7 +159,7 @@ jobs:
             OUTDIR=android-kernel/out/android12-5.10/dist
           fi
           mkdir output
-          cp $OUTDIR/* ./output/
+          cp $OUTDIR/Image ./output/
           git clone https://github.com/Kernel-SU/AnyKernel3
           rm -rf ./AnyKernel3/*
           cp $OUTDIR/* ./AnyKernel3/
