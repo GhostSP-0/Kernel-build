@@ -98,21 +98,6 @@ jobs:
           repo sync -j$(nproc --all) --no-tags
           df -h
           ls
-
-      - name: install clang 18
-        run: | 
-          mkdir $GITHUB_WORKSPACE/android-kernel/clang-19.0.0
-          cd $GITHUB_WORKSPACE/android-kernel/clang-19.0.0
-          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r522817.tar.gz
-          tar xvf *
-          cd $GITHUB_WORKSPACE/android-kernel
-
-      - name: Download source kernel
-        run: | 
-          cd $GITHUB_WORKSPACE/android-kernel
-          rm -r common
-          git clone https://github.com/GhostSP-0/projeck-kernel.git -b lts common
-
       - name: Setup KernelSU
         env:
           PATCH_PATH: ${{ inputs.patch_path }}
