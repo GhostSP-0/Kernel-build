@@ -98,13 +98,6 @@ jobs:
           repo sync -j$(nproc --all) --no-tags
           df -h
           ls
-      - name: Setup KernelSU
-        env:
-          PATCH_PATH: ${{ inputs.patch_path }}
-          IS_DEBUG_KERNEL: ${{ inputs.debug }}
-        run: |
-          cd $GITHUB_WORKSPACE/android-kernel
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
 
       - name: Setup ccache
         if: inputs.use_cache == true
