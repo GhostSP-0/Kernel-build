@@ -106,7 +106,7 @@ jobs:
 
       - name: download clang 21
         run: | 
-            cd $GITHUB_WORKSPACE/android-kernel/prebuilts-master/clang/host/linux-x86
+            cd $GITHUB_WORKSPACE/prebuilts-master/clang/host/linux-x86
             mkdir -p clang-r547379 && cd clang-r547379
             wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz
             tar -xvzf clang-r547379.tar.gz
@@ -175,10 +175,13 @@ jobs:
             patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch
             cp ../SukiSU_patch/hooks/syscall_hooks.patch ./ && patch -p1 -F 3 < syscall_hooks.patch
             cp ../SukiSU_patch/69_hide_stuff.patch ./ && patch -p1 -F 3 < 69_hide_stuff.patch
-
+            cd $GITHUB_WORKSPACE/android-kernel
+            
       - name: dalate post chek defconfig
         run: | 
+            cd $GITHUB_WORKSPACE/android-kernel/common
             sed -i '/^POST_DEFCONFIG_CMDS="check_defconfig"$/d' build.config.gki
+            cd $GITHUB_WORKSPACE/android-kernel
             
       - name: Setup ccache
         if: inputs.use_cache == true
