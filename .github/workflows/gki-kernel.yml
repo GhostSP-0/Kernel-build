@@ -161,7 +161,7 @@ jobs:
             echo 'CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSTAT=y' >> gki_defconfig
             #set local version and desibel localversion auto
             echo 'CONFIG_LOCALVERSION="-GhostSP-SukiSUxSUSFS"' >> gki_defconfig
-            echo 'CONFIG_LOCALVERSION_AUTO=n'1i CONFIG_AUDIT=y\nCONFIG_LOCALVERSION_AUTO=n\n...' gki_defconfig
+            echo 'CONFIG_LOCALVERSION_AUTO=n' >> gki_defconfig
             cd $GITHUB_WORKSPACE/android-kernel
 
       - name: DOWNLOAD dan setup sukisu
