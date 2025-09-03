@@ -97,8 +97,89 @@ jobs:
           repo init -u https://android.googlesource.com/kernel/manifest -b common-android12-5.10    
           repo sync -j$(nproc --all) --no-tags
           df -h
+          rm -rf common
           ls
 
+      - name: download source kernel
+        run: | 
+           git clone https://github.com/ramabondanp/android_kernel_common-5.10.git -b android12-5.10 common
+
+      - name: download clang 21
+        run: | 
+            cd $GITHUB_WORKSPACE/android-kernel/prebuilts-master/clang/host/linux-x86
+            mkdir -p clang-r547379 && cd clang-r547379
+            wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz
+            tar -xvzf clang-r547379.tar.gz
+            cd $GITHUB_WORKSPACE/android-kernel
+
+      - name: edit file untuk clang 21
+        run: | 
+            cd $GITHUB_WORKSPACE/android-kernel/common
+            sed -i 's|CLANG_PREBUILT_BIN=prebuilts-master/clang/host/linux-x86/clang-r563880b/bin|CLANG_PREBUILT_BIN=prebuilts-master/clang/host/linux-x86/clang-r547379/bin|' build.config.common
+            cd $GITHUB_WORKSPACE/android-kernel
+
+      - name: edit defconfig
+        run: | 
+            cd $GITHUB_WORKSPACE/android-kernel/common/arch/arm64/configs
+            cat <<EOF >> gki_defconfig
+            CONFIG_KSU=y
+            CONFIG_KPM=y
+            CONFIG_KSU_SUSFS_SUS_SU=n
+            CONFIG_KSU_MANUAL_HOOK=y
+            CONFIG_KSU_KPROBES_HOOK=n
+            CONFIG_KSU_SUSFS=y
+            CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y
+            CONFIG_KSU_SUSFS_SUS_PATH=y
+            CONFIG_KSU_SUSFS_SUS_MOUNT=y
+            CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y
+            CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y
+            CONFIG_KSU_SUSFS_SUS_KSTAT=y
+            CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n
+            CONFIG_KSU_SUSFS_TRY_UMOUNT=y
+            CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y
+            CONFIG_KSU_SUSFS_SPOOF_UNAME=y
+            CONFIG_KSU_SUSFS_ENABLE_LOG=y
+            CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y
+            CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
+            CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
+            CONFIG_TMPFS_XATTR=y
+            CONFIG_TMPFS_POSIX_ACL=y
+            # Memori
+            CONFIG_ZRAM=y
+            CONFIG_ZRAM_LZ4_COMPRESS=y
+            CONFIG_ZRAM_LZ4HC_COMPRESS=y
+            CONFIG_ZRAM_ZSTD_COMPRESS=y
+            CONFIG_ZRAM_WRITEBACK=y
+            CONFIG_ZSWAP=y
+            CONFIG_ZSWAP_COMPRESSOR_LZO=y
+            CONFIG_ZSWAP_COMPRESSOR_LZ4=y
+            CONFIG_ZSWAP_COMPRESSOR_ZSTD=y
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4=y
+            CONFIG_KSU_SUSFS_SUS_KSTAT_SPOOF_GENERIC=y
+            CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSTAT=y
+            EOF
+            #set local version and desibel localversion auto
+            echo 'CONFIG_LOCALVERSION="-GhostSP-SukiSUxSUSFS"'
+            echo 'CONFIG_LOCALVERSION_AUTO=n'1i CONFIG_AUDIT=y\nCONFIG_LOCALVERSION_AUTO=n\n...' gki_defconfig
+            cd $GITHUB_WORKSPACE/android-kernel
+
+      - name: DOWNLOAD dan setup sukisu
+        run: | 
+            # ---------- 6/13 Patch Sources ----------
+            echo "[6/13] Cloning & applying patches..."
+            git clone https://github.com/ShirkNeko/SukiSU_patch.git
+            cd common
+            curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
+            git clone https://gitlab.com/simonpunk/susfs4ksu/ -b gki-android12-5.10 ../sus
+            cp -r ../sus/kernel_patches/fs . && cp -r ../sus/kernel_patches/include . && cp ../sus/kernel_patches/50_add_susfs_in_gki-android12-5.10.patch .
+            patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch
+            cp ../SukiSU_patch/hooks/syscall_hooks.patch ./ && patch -p1 -F 3 < syscall_hooks.patch
+            cp ../SukiSU_patch/69_hide_stuff.patch ./ && patch -p1 -F 3 < 69_hide_stuff.patch
+
+      - name: dalate post chek defconfig
+        run: | 
+            sed -i '/^POST_DEFCONFIG_CMDS="check_defconfig"$/d' build.config.gki
+            
       - name: Setup ccache
         if: inputs.use_cache == true
         uses: hendrikmuhs/ccache-action@v1.2
@@ -110,6 +191,11 @@ jobs:
       - name: Build boot.img
         working-directory: android-kernel
         run: |
+          # Ekspor PATH untuk sesi ini (diagnostik awal)
+          export PATH="$CLANG_PATH/bin:$PATH"
+          export CC="ccache clang"
+          echo "✅ Host Clang visible now: $(clang --version | head -n 1)"
+          
           if [ -e build/build.sh ]; then
             LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
           else
@@ -140,3 +226,4 @@ jobs:
         with:
           name: AnyKernel3-${{ inputs.version_name }}_${{ inputs.os_patch_level }}
           path: ./AnyKernel3/*
+          
