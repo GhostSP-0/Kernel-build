@@ -124,43 +124,41 @@ jobs:
       - name: edit defconfig
         run: | 
             cd $GITHUB_WORKSPACE/android-kernel/common/arch/arm64/configs
-            cat <<EOF >> gki_defconfig
-            CONFIG_KSU=y
-            CONFIG_KPM=y
-            CONFIG_KSU_SUSFS_SUS_SU=n
-            CONFIG_KSU_MANUAL_HOOK=y
-            CONFIG_KSU_KPROBES_HOOK=n
-            CONFIG_KSU_SUSFS=y
-            CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y
-            CONFIG_KSU_SUSFS_SUS_PATH=y
-            CONFIG_KSU_SUSFS_SUS_MOUNT=y
-            CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y
-            CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y
-            CONFIG_KSU_SUSFS_SUS_KSTAT=y
-            CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n
-            CONFIG_KSU_SUSFS_TRY_UMOUNT=y
-            CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y
-            CONFIG_KSU_SUSFS_SPOOF_UNAME=y
-            CONFIG_KSU_SUSFS_ENABLE_LOG=y
-            CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y
-            CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
-            CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
-            CONFIG_TMPFS_XATTR=y
-            CONFIG_TMPFS_POSIX_ACL=y
+            echo 'CONFIG_KSU=y' >> gki_defconfig
+            echo 'CONFIG_KPM=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SUS_SU=n' >> gki_defconfig
+            echo 'CONFIG_KSU_MANUAL_HOOK=y' >> gki_defconfig
+            echo 'CONFIG_KSU_KPROBES_HOOK=n' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SUS_PATH=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SUS_MOUNT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SUS_KSTAT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_TRY_UMOUNT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SPOOF_UNAME=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_ENABLE_LOG=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_OPEN_REDIRECT=y' >> gki_defconfig
+            echo 'CONFIG_TMPFS_XATTR=y' >> gki_defconfig
+            echo 'CONFIG_TMPFS_POSIX_ACL=y' >> gki_defconfig
             # Memori
-            CONFIG_ZRAM=y
-            CONFIG_ZRAM_LZ4_COMPRESS=y
-            CONFIG_ZRAM_LZ4HC_COMPRESS=y
-            CONFIG_ZRAM_ZSTD_COMPRESS=y
-            CONFIG_ZRAM_WRITEBACK=y
-            CONFIG_ZSWAP=y
-            CONFIG_ZSWAP_COMPRESSOR_LZO=y
-            CONFIG_ZSWAP_COMPRESSOR_LZ4=y
-            CONFIG_ZSWAP_COMPRESSOR_ZSTD=y
-            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4=y
-            CONFIG_KSU_SUSFS_SUS_KSTAT_SPOOF_GENERIC=y
-            CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSTAT=y
-            EOF
+            echo 'CONFIG_ZRAM=y' >> gki_defconfig
+            echo 'CONFIG_ZRAM_LZ4_COMPRESS=y' >> gki_defconfig
+            echo 'CONFIG_ZRAM_LZ4HC_COMPRESS=y' >> gki_defconfig
+            echo 'CONFIG_ZRAM_ZSTD_COMPRESS=y' >> gki_defconfig
+            echo 'CONFIG_ZRAM_WRITEBACK=y' >> gki_defconfig
+            echo 'CONFIG_ZSWAP=y' >> gki_defconfig
+            echo 'CONFIG_ZSWAP_COMPRESSOR_LZO=y' >> gki_defconfig
+            echo 'CONFIG_ZSWAP_COMPRESSOR_LZ4=y' >> gki_defconfig
+            echo 'CONFIG_ZSWAP_COMPRESSOR_ZSTD=y' >> gki_defconfig
+            echo 'CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_SUS_KSTAT_SPOOF_GENERIC=y' >> gki_defconfig
+            echo 'CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSTAT=y' >> gki_defconfig
             #set local version and desibel localversion auto
             echo 'CONFIG_LOCALVERSION="-GhostSP-SukiSUxSUSFS"' >> gki_defconfig
             echo 'CONFIG_LOCALVERSION_AUTO=n'1i CONFIG_AUDIT=y\nCONFIG_LOCALVERSION_AUTO=n\n...' gki_defconfig
