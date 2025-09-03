@@ -166,6 +166,7 @@ jobs:
 
       - name: DOWNLOAD dan setup sukisu
         run: | 
+            cd $GITHUB_WORKSPACE/android-kernel
             # ---------- 6/13 Patch Sources ----------
             echo "[6/13] Cloning & applying patches..."
             git clone https://github.com/ShirkNeko/SukiSU_patch.git
