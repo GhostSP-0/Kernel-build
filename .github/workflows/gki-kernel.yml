@@ -99,14 +99,17 @@ jobs:
           df -h
           rm -rf common
           ls
+          cd $GITHUB_WORKSPACE/android-kernel
 
       - name: download source kernel
         run: | 
+           cd $GITHUB_WORKSPACE/android-kernel
            git clone https://github.com/ramabondanp/android_kernel_common-5.10.git -b android12-5.10 common
-
+           cd $GITHUB_WORKSPACE/android-kernel
+           
       - name: download clang 21
         run: | 
-            cd $GITHUB_WORKSPACE/prebuilts-master/clang/host/linux-x86
+            cd $GITHUB_WORKSPACE/android-kernel/prebuilts-master/clang/host/linux-x86
             mkdir -p clang-r547379 && cd clang-r547379
             wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz
             tar -xvzf clang-r547379.tar.gz
